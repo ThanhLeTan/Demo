@@ -40,19 +40,24 @@
 #include "main.h"
 #include "stm32f1xx_hal.h"
 #include "string.h"
+
+
 /* USER CODE BEGIN Includes */
+#include "CLCD_I2C.h"
+#include "dht11.h"
 /* USER CODE END Includes */
 /* Private variables ---------------------------------------------------------*/
 CAN_HandleTypeDef hcan1;
 UART_HandleTypeDef huart1;
-
+I2C_HandleTypeDef hi2c1;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
 
 CAN_FilterConfTypeDef sFilterConfig;
 CanTxMsgTypeDef TxMessage;
 CanRxMsgTypeDef RxMessage;
+
+CLCD_I2C_Name LCD1;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -60,6 +65,8 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_CAN_Init(void);
+static void MX_I2C1_Init(void);
+
 void Serialprintln(char _out[]);
 void newline(void);
 HAL_StatusTypeDef T_HAL_CAN_Transmit(CAN_HandleTypeDef* hcan, uint32_t Timeout);
@@ -109,6 +116,14 @@ int main(void)
 	Serialprintln("HAL initiated");
 	Serialprintln("Going to try to initiate MX_CAN");
 	Serialprintln("INITIALISING CAN BUS NOW");
+
+  MX_I2C1_Init();
+  CLCD_I2C_Init(&LCD1,&hi2c1,0x4e,20,4);
+	CLCD_I2C_SetCursor(&LCD1, 0, 0);
+	CLCD_I2C_WriteString(&LCD1,"Linh To dep gai");
+	CLCD_I2C_SetCursor(&LCD1, 0, 1);
+	CLCD_I2C_WriteString(&LCD1,"Hello anh em !");
+
   MX_CAN_Init();
 	HAL_Delay(500);
 	Serialprintln("Setting the Messages and perameters");
@@ -156,20 +171,20 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	HAL_Delay(500);
-  while (1)
-  {
-		Serialprintln("In the loop now");
-		Serialprintln("Trying to send a message");
-		T_HAL_CAN_Transmit(&hcan1, 10);
-		Serialprintln("Message sent");
-
-  /* USER CODE END WHILE */
-
-  /* USER CODE BEGIN 3 */
-
-  }
+//  while (1)
+//  {
+//		Serialprintln("In the loop now");
+//		Serialprintln("Trying to send a message");
+//		T_HAL_CAN_Transmit(&hcan1, 10);
+//		Serialprintln("Message sent");
+//
+//  /* USER CODE END WHILE */
+//
+//  /* USER CODE BEGIN 3 */
+//
+//  }
   /* USER CODE END 3 */
-
+	Serialprintln("----------------------------------");
 }
 
 /**
@@ -272,6 +287,37 @@ static void MX_USART1_UART_Init(void)
 
 }
 
+/* I2C1 Init */
+static void MX_I2C1_Init(void)
+{
+
+  /* USER CODE BEGIN I2C1_Init 0 */
+
+  /* USER CODE END I2C1_Init 0 */
+
+  /* USER CODE BEGIN I2C1_Init 1 */
+
+  /* USER CODE END I2C1_Init 1 */
+  Serialprintln("Welcome to I2C initialization");
+  hi2c1.Instance = I2C1;
+  hi2c1.Init.ClockSpeed = 100000;
+  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c1.Init.OwnAddress1 = 0;
+  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c1.Init.OwnAddress2 = 0;
+  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+  {
+    Error_Handler();
+		Serialprintln("I2C initialization failed");
+  }
+  /* USER CODE BEGIN I2C1_Init 2 */
+
+  /* USER CODE END I2C1_Init 2 */
+
+}
 /** Configure pins as 
         * Analog 
         * Input 
@@ -298,6 +344,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+	/*Configure GPIO pin : PB13 */
+	//GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
+  //GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+  //GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  //HAL_GPIO_Init(GPIOB, &GPIO_InitStruct); 
 
 }
 

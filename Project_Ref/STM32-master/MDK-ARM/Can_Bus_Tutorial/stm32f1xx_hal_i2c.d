@@ -1,5 +1,5 @@
-can_bus_tutorial/stm32f1xx_hal_tim_ex.o: \
-  ..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_tim_ex.c \
+can_bus_tutorial/stm32f1xx_hal_i2c.o: \
+  ..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_i2c.c \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h \
   ..\Inc\stm32f1xx_hal_conf.h ..\Inc\main.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h \
